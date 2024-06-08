@@ -1,0 +1,58 @@
+Problem :: 3171. Find Subarray With Bitwise AND Closest to K
+
+You are given an array nums and an integer k. You need to find a 
+subarrayof nums such that the absolute difference between k and the bitwise AND of the subarray elements is as small as possible. 
+In other words, select a subarray nums[l..r] such that |k - (nums[l] AND nums[l + 1] ... AND nums[r])| is minimum.
+
+Return the minimum possible value of the absolute difference.
+
+A subarray is a contiguous non-empty sequence of elements within an array.
+
+Time Complexity :: O(N)
+Space Complxity :: O(1)
+ 
+Code :: #pragma gcc optimize("03")
+auto init = [](){
+    ios::sync_with_stdio(0);
+    cin.tie(0);
+    cout.tie(0);
+    return 'c';
+}();
+class Solution {
+    void add_element(vector<int>&bit , int n){
+        for(int i=0 ; i<32 ;i++){
+            if(!(n & 1<<i))bit[i]++;
+        }
+    }
+    void sub_element(vector<int>&bit , int n){
+        for(int i=0 ; i<32 ; i++){
+            if(!(n & 1<<i))bit[i]--;
+        }
+    }
+    int number(vector<int>&bit){
+        int n =0;
+        for(int i=0 ; i<32 ; i++){
+            n+=(1<<i)*( bit[i]==0);
+        }
+        return n;
+    }
+public:
+    int minimumDifference(vector<int>& nums, int k) {
+        vector<int>bit(32);
+        int j=0;
+        int mini = INT_MAX;
+        for(int i=0 ; i<nums.size() ; i++){
+            add_element(bit , nums[i]);
+            int num = number(bit);
+            mini = min(mini , abs(num - k));
+            while(num<k && j<i ){
+                sub_element(bit ,nums[j]);
+                num = number(bit);
+                mini  = min(mini , abs(num - k));
+                j++;
+            }
+            if(mini == 0)return 0;
+        }
+        return mini;
+    }
+};
